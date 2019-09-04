@@ -9,6 +9,9 @@ const News = require('../controller/news');
 const House = require('../controller/house');
 const Upload = require('../controller/upload');
 const Fix = require('../controller/fix');
+const Workflow = require('../controller/workflow');
+// 表单设计器
+const Component = require('../controller/component');
 
 const r = function(app) {
   
@@ -22,6 +25,8 @@ const r = function(app) {
   router.use("/house", House.routes());
   router.use("/upload", Upload.routes());
   router.use("/fix", Fix.routes());
+  router.use("/workflow", Workflow.routes());
+  router.use("/component", Component.routes());
   app.use(router.routes()).use(router.allowedMethods());
 }
 

@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const Router = require("koa-router");
 const router = new Router();
-const Workflow = require('../schemas/WorkflowSchema');
+const Workflow = require('../schemas/workflowSchema');
 // 创建资讯
 /*
  * * @desc 保存

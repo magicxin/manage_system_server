@@ -5,6 +5,8 @@ const router = new Router({
   prefix: '/community_manage'
 });
 const User = require('../controller/user');
+const Lover = require('../controller/lover');
+
 const News = require('../controller/news');
 const House = require('../controller/house');
 const Upload = require('../controller/upload');
@@ -21,6 +23,8 @@ const r = function(app) {
  * 路由中间件最后调用.此时根据 ctx.status 设置 response 响应头 
  */
   router.use("/user", User.routes());
+  router.use("/lover", Lover.routes());
+
   router.use("/news", News.routes());
   router.use("/house", House.routes());
   router.use("/upload", Upload.routes());

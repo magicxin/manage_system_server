@@ -9,12 +9,15 @@ var Schema = mongoose.Schema;
  * @type {mongoose}
  */
 var LoverSchema = new Schema({
-  nickname: String,
+  nickName: String,
   openid: String,
-  companion: {
-    type:Schema.Types.ObjectId,
-    ref:'Lover'
-  },
+  avatarUrl: String,
+  city:String,
+  country:String,
+  gender:Number,
+  language:String,
+  province:String,
+  companion: Object,
   meta: {
     createAt: {
       type: Date,

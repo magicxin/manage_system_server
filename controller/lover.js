@@ -7,7 +7,7 @@ const Lover = require('../schemas/loverSchema');
 /*
  * @desc 查询
  * @url '/community_manage/lover/search'
- * @params [String] pagesize @desc 条数
+ * @params [String] id @desc Lover id
  * */
 router.get('/search', async (ctx) => {
     let _id = ctx.request.query.id;
@@ -77,17 +77,20 @@ router.post('/bind', async (ctx) => {
     // if (idOwn.match(/^[0-9a-fA-F]{24}$/)) {
     //     // Yes, it's a valid ObjectId, proceed with `findById` call.
     // }
-    let lovers = await Lover.find({ _id: { $in: [idOwn, idHis] } }).exec();
-    lovers[0].companion = idHis;
-    lovers[0].save();
-    lovers[1].companion = idOwn;
-    lovers[1].save();
+    let lover1 = await Lover.find({ _id: idOwn }).exec();
+    let lover2 = await Lover.find({ _id: idHis }).exec();
+    // let lovers = await Lover.find({ _id: { $in: [idOwn, idHis] } }).exec();
+    lover1.companion = idHis;
+    lover1.save();
+    lover2.companion = idOwn;
+    lover2.save();
 
     ctx.body = {
         code: 200,
         message: 'bind success.',
         data: {
-            user: lovers
+            user1: lover1,
+            user2: lover2
         }
     };
 });

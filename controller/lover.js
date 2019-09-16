@@ -11,7 +11,7 @@ const Lover = require('../schemas/loverSchema');
  * */
 router.get('/search', async (ctx) => {
     let _id = ctx.request.query.id;
-    let lover = await Lover.find({_id: _id}).exec();
+    let lover = await Lover.findOne({_id: _id}).exec();
     ctx.body = {
         code: 200,
         message: 'search success.',
@@ -44,8 +44,8 @@ router.get('/search', async (ctx) => {
  * */
 router.post('/save', async (ctx) => {
     let params = ctx.request.body;
-    let lover = await Lover.find({openid: params.openid}).exec();
-    if (lover.length > 0) {
+    let lover = await Lover.findOne({openid: params.openid}).exec();
+    if (lover) {
         ctx.body = {
             code: 501,
             message: 'user already exist.',
@@ -77,8 +77,8 @@ router.post('/bind', async (ctx) => {
     // if (idOwn.match(/^[0-9a-fA-F]{24}$/)) {
     //     // Yes, it's a valid ObjectId, proceed with `findById` call.
     // }
-    let lover1 = await Lover.find({ _id: idOwn }).exec();
-    let lover2 = await Lover.find({ _id: idHis }).exec();
+    let lover1 = await Lover.findOne({ _id: idOwn }).exec();
+    let lover2 = await Lover.findOne({ _id: idHis }).exec();
     // let lovers = await Lover.find({ _id: { $in: [idOwn, idHis] } }).exec();
     lover1.companion = idHis;
     lover1.save();

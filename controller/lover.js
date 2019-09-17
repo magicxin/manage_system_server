@@ -3,7 +3,7 @@ const Router = require("koa-router");
 const createToken = require("../token/createToken");
 const router = new Router();
 const Lover = require('../schemas/loverSchema');
-
+const Home = require('../schemas/loveHomeSchema');
 /*
  * @desc 查询
  * @url '/community_manage/lover/search'
@@ -80,18 +80,39 @@ router.post('/bind', async (ctx) => {
     let lover1 = await Lover.findOne({ _id: idOwn }).exec();
     let lover2 = await Lover.findOne({ _id: idHis }).exec();
     // let lovers = await Lover.find({ _id: { $in: [idOwn, idHis] } }).exec();
-    lover1.companion = idHis;
-    lover1.save();
-    lover2.companion = idOwn;
-    lover2.save();
+    if (lover1.home || lover2.home) {
+        ctx.body = {
+            code: 502,
+            message: 'home exist.',
+            data: null
+        };
+    } else if(lover1.companion || lover2.companion) {
+        ctx.body = {
+            code: 502,
+            message: 'companion exist.',
+            data: null
+        };
+    } else {
+        const home = new Home({
+            name: '爱的小屋',
+            members: [lover1, lover2]
+        });
+        home.save();
+        lover1.companion = idHis;
+        lover1.home = home;
+        lover1.save();
+        lover2.companion = idOwn;
+        lover2.home = home;
+        lover2.save();
 
-    ctx.body = {
-        code: 200,
-        message: 'bind success.',
-        data: {
-            user1: lover1,
-            user2: lover2
-        }
-    };
+        ctx.body = {
+            code: 200,
+            message: 'bind success.',
+            data: {
+                user1: lover1,
+                user2: lover2
+            }
+        };
+    }
 });
 module.exports = router;

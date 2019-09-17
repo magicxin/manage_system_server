@@ -61,4 +61,30 @@ router.get('/searchById', async(ctx) => {
   }
 })
 
+router.get('/searchComponent', async(ctx) => {
+  ctx.body = {
+    code: 200,
+    message: '查询成功',
+    data: [{
+      name: 'sd-field',
+      show: true,
+      label: '表单域',
+      type: 0, // 0 基本 1 高级
+      icon: 'icon-danhangshurukuang'
+    },{
+      name: 'sd-button',
+      show: true,
+      label: '按钮',
+      type: 0, // 0 基本 1 高级
+      icon: 'icon-anniuzu'
+    },{
+      name: 'sd-text',
+      show: false,
+      label: '文本',
+      type: 0, // 0 基本 1 高级
+      icon: 'icon-label'
+    }]
+  }
+})
+
 module.exports = router;

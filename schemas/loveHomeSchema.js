@@ -8,24 +8,16 @@ var Schema = mongoose.Schema;
  * 除了定义结构外，还定义文档的实例方法，静态模型方法，复合索引，中间件等
  * @type {mongoose}
  */
-var LoverSchema = new Schema({
-  nickName: String,
-  openid: String,
-  avatarUrl: String,
-  city:String,
-  country:String,
-  gender:Number,
-  language:String,
-  province:String,
-  companion: Object,
+var LoverHomeSchema = new Schema({
+  name: String,
+  members: [{
+    type:Schema.Types.ObjectId,
+    ref:'Lover'
+  }],
   dynamic: [{
     type:Schema.Types.ObjectId,
     ref:'Dynamic'
   }],
-  home: {
-    type:Schema.Types.ObjectId,
-    ref:'Home'
-  },
   meta: {
     createAt: {
       type: Date,
@@ -39,7 +31,7 @@ var LoverSchema = new Schema({
 })
 
 // Defines a pre hook for the document.
-LoverSchema.pre('save', function(next) {
+LoverHomeSchema.pre('save', function(next) {
   if (this.isNew) {
     this.meta.createAt = this.meta.updateAt = Date.now()
   }
@@ -56,6 +48,6 @@ LoverSchema.pre('save', function(next) {
  * @type {[type]}
  */
 // 参数Lover 数据库中的集合名称, 不存在会创建.
-var Lover = mongoose.model('Lover', LoverSchema)
+var Home = mongoose.model('Home', LoverHomeSchema)
 
-module.exports = Lover
+module.exports = Home

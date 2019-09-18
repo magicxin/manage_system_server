@@ -93,10 +93,12 @@ router.post('/bind', async (ctx) => {
             data: null
         };
     } else {
+        //  Maximum call stack size exceeded
         const home = new Home({
-            name: '爱的小屋',
-            members: [lover1, lover2]
+            name: '爱的小屋'
         });
+        home.members.push(lover1);
+        home.members.push(lover2);
         home.save();
         lover1.companion = idHis;
         lover1.home = home;

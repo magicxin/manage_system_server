@@ -15,13 +15,19 @@ const Home = require('../schemas/loveHomeSchema');
  * */
 router.get('/search', async (ctx) => {
   let id = ctx.request.query.id;
-  console.log(id)
-  const dynamic = await Dynamic.find({home: id},{},{news:true}).skip(0).limit(10).populate('author').exec();
+  let count = Number(ctx.request.query.count);
+  let index = Number(ctx.request.query.index)*count;
+
+  let length = await Dynamic.find({home: id}).countDocuments();
+  const dynamic = await Dynamic.find({home: id},{},{news:true}).skip(index).limit(count).populate('author').exec();
   if (dynamic) {
     ctx.body = {
       code: 200,
       message: 'find succeed.',
-      data: dynamic
+      data: {
+        dynamic: dynamic,
+        length: length
+      }
     }
   }
 });

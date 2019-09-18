@@ -63,4 +63,25 @@ router.post('/save', async (ctx) => {
   };
 });
 
+router.post('/comment', async (ctx) => {
+  // TODO 回复评论者
+  let authorId = ctx.request.body.authorId;
+  let dynamicId = ctx.request.body.dynamicId;
+  let content = ctx.request.body.content;
+  const dynamic = await Dynamic.findOne({_id:dynamicId}).exec();
+
+  const author = await Lover.findOne({_id:authorId}).exec();
+  dynamic.comment.push({
+    author: author,
+    content: content,
+    createAt: Date.now()
+  });
+  dynamic.save();
+  ctx.body = {
+    code: 200,
+    message: 'comment succeed',
+    data: null
+  };
+});
+
 module.exports = router;

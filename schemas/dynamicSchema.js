@@ -23,6 +23,7 @@ const DynamicSchema = new Schema({
   type:String,// // 1 私有 2 公共
   images:Array,
   video: String,
+  comment: Array,
   meta: {
     createAt: {
       type: Date,

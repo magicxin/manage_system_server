@@ -12,7 +12,6 @@ const utils = require('../utils');
 router.post('/insertmany', async(ctx) => {
   let componentArray = ctx.request.body.components;
   const result = await Component.insertMany(componentArray);
-  console.log(result)
   if (result) {
     ctx.body = {
         code: 200,

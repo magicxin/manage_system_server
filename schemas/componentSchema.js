@@ -12,13 +12,15 @@ let ObjectId = mongoose.Schema.Types.ObjectId;
  */
 const ComponentSchema = new Schema({
   name:String,
-  value: String,
+  label: String,
+  icon: String,
   desc: String,
+  props: Object,
   type: {
-    type: String,
-    default: 'base' // ['base', 'senior']
+    type: Number,
+    default: 0 // [0, 1]
   },
-  enable: {
+  show: {
     type: Boolean,
     default: true
   },

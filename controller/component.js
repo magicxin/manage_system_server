@@ -57,7 +57,7 @@ router.post('/save', async(ctx) => {
 //  user.save()
     ctx.body = {
     code: 200,
-    message: '创建成功',
+    message: 'create succeed.',
     data: {
         success:true
       }
@@ -89,7 +89,7 @@ let length = 0;
   
   ctx.body = {
     code: 200,
-    message: '查询成功',
+    message: 'find succeed.',
     data: {
       components: components,
       length:length
@@ -97,50 +97,52 @@ let length = 0;
   }
 })
 
-// 查询详情
-/*
- * * @desc 详情
- * @url '/community_manage/news/searchById'
- * @params [String] _id @desc 资讯id
- * */
-router.get('/searchById', async(ctx) => {
-  let _id = ctx.request.query._id
-  let news = await News.findOne({_id:_id}).populate('user').exec()
-  
-  ctx.body = {
-    code: 200,
-    message: '查询成功',
-    data: news
-  }
-})
-// 删除资讯
-/*
- * * @desc 删除
- * @url '/community_manage/news/delete'
- * @params [String] _id @desc _id
- * */
-router.post('/delete', async(ctx) => {
-  let _id = ctx.request.body._id
-  console.log(_id)
-  let  news = await News.findByIdAndDelete({_id:_id})
-  if(news) {
-    const user = await User.findOne({_id:news.user._id}).exec()
-    let i = ''
-    user.dynamic.forEach((item,index)=>{
-      if(item === _id) {
-        i = index
-      }
-    })
-    user.dynamic.splice(i,1)
-    user.save()
+router.post('/edit', async(ctx) => {
+  let { label, show, icon, type, _id } = ctx.request.body;
+  const component = await Component.findOneAndUpdate({_id: _id},
+     {
+       label:label,
+       show: Boolean(show),
+       icon: icon,
+       type: Number(type)
+      }, {}).exec();
+  if (component) {
     ctx.body = {
-    code: 200,
-    message: '删除成功',
-    data: {
-        success:true
+      code: 200,
+      message: 'edit succeed.',
+      data: {
+        component: component
       }
-    }
+    };
+  } else {
+    ctx.body = {
+      code: 900,
+      message: 'component is not exist.',
+      data: null
+    };
   }
-  
-})
+});
+
+router.post('/editProp', async(ctx) => {
+  let { _id, props } = ctx.request.body;
+  let component = await Component.findOneAndUpdate({_id: _id}, {
+    props: props
+  }).exec();
+
+  if (component) {
+    ctx.body = {
+      code: 200,
+      message: 'edit succeed.',
+      data: {
+        component: component
+      }
+    };
+  } else {
+    ctx.body = {
+      code: 900,
+      message: 'component is not exist.',
+      data: null
+    };
+  }
+});
 module.exports = router;

@@ -2,11 +2,12 @@ const Koa = require('koa');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const path = require('path');
 const config = require('./config');
 const uris = require('./uris');
 const staticServer = require('koa-static');
-const bodyParser = require('koa-bodyparser');
-
+// const bodyParser = require('koa-bodyparser');
+var koaBody = require("koa-body");
 const Router = require('./router');
 // const chalk = require('chalk');
 const cors = require('@koa/cors');
@@ -28,12 +29,24 @@ mongoose.set('useFindAndModify', false)
 //});
 
 app.use(staticServer(__dirname + '/public'));
-app.use(bodyParser({
-    onerror: function (err, ctx) {
-        ctx.throw('body parse error', 422);
+// app.use(bodyParser({
+//     onerror: function (err, ctx) {
+//         ctx.throw('body parse error', 422);
+//     }
+// }));
+app.use(koaBody({
+    multipart:true, // 支持文件上传
+    encoding:'gzip',
+    formidable:{
+      uploadDir:path.join(__dirname,'public/uploads/'), // 设置文件上传目录
+      keepExtensions: true,    // 保持文件的后缀
+      maxFieldsSize:2 * 1024 * 1024, // 文件上传大小
+      onFileBegin:(name,file) => { // 文件上传前的设置
+        console.log(`name: ${name}`);
+        console.log(file);
+      },
     }
-}));
-
+  }));
 Router(app);
 app.use(cors());
 

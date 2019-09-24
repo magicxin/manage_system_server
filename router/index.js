@@ -8,6 +8,7 @@ const User = require('../controller/user');
 // love app
 const Lover = require('../controller/lover');
 const Dynamic = require('../controller/dynamic');
+const Upfile = require('../controller/loveController/upload');
 
 const News = require('../controller/news');
 const House = require('../controller/house');
@@ -28,6 +29,7 @@ const r = function(app) {
   // love app
   router.use("/lover", Lover.routes());
   router.use("/dynamic", Dynamic.routes());
+  router.use("/upfile", Upfile.routes());
 
   router.use("/news", News.routes());
   router.use("/house", House.routes());

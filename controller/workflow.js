@@ -47,7 +47,7 @@ router.post('/save', async(ctx) => {
 // 查询详情
 /*
  * * @desc 详情
- * @url '/community_manage/news/searchById'
+ * @url '/community_manage/workflow/searchById'
  * @params [String] _id @desc 资讯id
  * */
 router.get('/searchById', async(ctx) => {
@@ -60,6 +60,24 @@ router.get('/searchById', async(ctx) => {
     data: workflow
   }
 })
+/*
+* @desc 构建的表单数据列表
+* @url '/community_manage/workflow/list'
+* @params [String] count @desc 每组条数
+* @params [Number] index @desc 第几组
+*/ 
+router.get('/list', async(ctx) => {
+  let count = Number(ctx.request.query.count);
+  let index = Number(ctx.request.query.index)*count;
+  let workflow = await Workflow.find().skip(index).limit(count).exec()
+  if (workflow) {
+    ctx.body = {
+      code: 200,
+      message: 'list succeed.',
+      data: workflow 
+    };
+  }
+});
 
 router.get('/searchComponent', async(ctx) => {
   ctx.body = {

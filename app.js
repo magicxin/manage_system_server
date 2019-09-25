@@ -2,7 +2,6 @@ const Koa = require('koa');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const path = require('path');
 const config = require('./config');
 const uris = require('./uris');
 const staticServer = require('koa-static');
@@ -34,19 +33,7 @@ app.use(staticServer(__dirname + '/public'));
 //         ctx.throw('body parse error', 422);
 //     }
 // }));
-app.use(koaBody({
-    multipart:true, // 支持文件上传
-    encoding:'gzip',
-    formidable:{
-      uploadDir:path.join(__dirname,'public/uploads/'), // 设置文件上传目录
-      keepExtensions: true,    // 保持文件的后缀
-      maxFieldsSize:2 * 1024 * 1024, // 文件上传大小
-      onFileBegin:(name,file) => { // 文件上传前的设置
-        console.log(`name: ${name}`);
-        console.log(file);
-      },
-    }
-  }));
+app.use(koaBody());
 Router(app);
 app.use(cors());
 

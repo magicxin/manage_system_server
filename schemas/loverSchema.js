@@ -18,6 +18,10 @@ var LoverSchema = new Schema({
   language:String,
   province:String,
   companion: Object,
+  album: [{
+    type:Schema.Types.ObjectId,
+    ref:'Album'
+  }],
   dynamic: [{
     type:Schema.Types.ObjectId,
     ref:'Dynamic'

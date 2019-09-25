@@ -1,6 +1,8 @@
 'use strict'
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
+
+let ObjectId = mongoose.Schema.Types.ObjectId;
 /**
  * 定义一个模式(相当于传统意义的表结构)
  * 每个模式映射mongoDB的一个集合，
@@ -8,20 +10,19 @@ var Schema = mongoose.Schema;
  * 除了定义结构外，还定义文档的实例方法，静态模型方法，复合索引，中间件等
  * @type {mongoose}
  */
-var LoverHomeSchema = new Schema({
+const AlbumSchema = new Schema({
+  author: {
+    type: ObjectId,
+    ref: 'Lover'
+  },
+  home: {
+    type: ObjectId,
+    ref: 'Home'
+  },
+  type: String,
   name: String,
-  members: [{
-    type:Schema.Types.ObjectId,
-    ref:'Lover'
-  }],
-  dynamic: [{
-    type:Schema.Types.ObjectId,
-    ref:'Dynamic'
-  }],
-  album: [{
-    type:Schema.Types.ObjectId,
-    ref:'Album'
-  }],
+  images: Array,
+  desc: String,
   meta: {
     createAt: {
       type: Date,
@@ -35,7 +36,7 @@ var LoverHomeSchema = new Schema({
 })
 
 // Defines a pre hook for the document.
-LoverHomeSchema.pre('save', function(next) {
+AlbumSchema.pre('save', function(next) {
   if (this.isNew) {
     this.meta.createAt = this.meta.updateAt = Date.now()
   }
@@ -47,11 +48,11 @@ LoverHomeSchema.pre('save', function(next) {
 
 
 /**
- * 定义模型Lover
+ * 定义模型User
  * 模型用来实现我们定义的模式，调用mongoose.model来编译Schema得到Model
  * @type {[type]}
  */
-// 参数Lover 数据库中的集合名称, 不存在会创建.
-var Home = mongoose.model('Home', LoverHomeSchema)
+// 参数User 数据库中的集合名称, 不存在会创建.
+var Album = mongoose.model('Album', AlbumSchema)
 
-module.exports = Home
+module.exports = Album

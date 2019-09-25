@@ -5,6 +5,7 @@ const router = new Router();
 const Dynamic = require('../schemas/dynamicSchema');
 const Lover = require('../schemas/loverSchema');
 const Home = require('../schemas/loveHomeSchema');
+const Album = require('../schemas/albumSchema');
 // const utils = require('../utils');
 
 // 查询
@@ -17,7 +18,6 @@ router.get('/search', async (ctx) => {
   let id = ctx.request.query.id;
   let count = Number(ctx.request.query.count);
   let index = Number(ctx.request.query.index)*count;
-
   let length = await Dynamic.find({home: id}).countDocuments();
   const dynamic = await Dynamic.find({home: id},{},{news:true}).skip(index).limit(count).populate('author').exec();
   if (dynamic) {
@@ -43,22 +43,47 @@ router.post('/save', async (ctx) => {
   let homeId = ctx.request.body.homeId;
   let authorId = ctx.request.body.authorId;
   let content = ctx.request.body.content;
+  let images = ctx.request.body.images;
   const dynamic = new Dynamic({
     author: authorId,
     home: homeId,
     content: content,
-    type: 1 // 默认私有
+    type: 1, // 默认私有
+    images: images
   });
   dynamic.save();
   const lover = await Lover.findOne({_id:authorId}).exec();
   lover.dynamic.push(dynamic);
-  lover.save();
+
   const home = await Home.findOne({_id:homeId}).exec();
   home.dynamic.push(dynamic);
+
+  const album = await Album.findOne({type: 'system'}).exec();
+  if (album) {
+    images.forEach(item => {
+      album.images.push(item);
+    });
+    album.save();
+  } else {
+    const album = new Album({
+      author: authorId,
+      home: homeId,
+      images: images,
+      type: 'system',
+      name: '系统相册',
+      desc: '系统相册'
+    });
+    album.save();
+    lover.album.push(album);
+    home.album.push(album);
+  }
+  
+  lover.save();
   home.save();
+
   ctx.body = {
     code: 200,
-    message: 'save succeed',
+    message: 'save succeed.',
     data: null
   };
 });

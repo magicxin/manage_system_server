@@ -117,4 +117,5 @@ router.post('/bind', async (ctx) => {
         };
     }
 });
+
 module.exports = router;

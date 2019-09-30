@@ -17,9 +17,9 @@ const Album = require('../schemas/albumSchema');
 router.get('/search', async (ctx) => {
   let id = ctx.request.query.id;
   let count = Number(ctx.request.query.count);
-  let index = Number(ctx.request.query.index)*count;
-  let length = await Dynamic.find({home: id}).countDocuments();
-  const dynamic = await Dynamic.find({home: id},{},{news:true}).skip(index).limit(count).populate('author').exec();
+  let index = Number(ctx.request.query.index) * count;
+  let length = await Dynamic.find({ home: id }).countDocuments();
+  const dynamic = await Dynamic.find({ home: id }, {}, { news: true }).skip(index).limit(count).populate('author').exec();
   if (dynamic) {
     ctx.body = {
       code: 200,
@@ -52,13 +52,13 @@ router.post('/save', async (ctx) => {
     images: images
   });
   dynamic.save();
-  const lover = await Lover.findOne({_id:authorId}).exec();
+  const lover = await Lover.findOne({ _id: authorId }).exec();
   lover.dynamic.push(dynamic);
 
-  const home = await Home.findOne({_id:homeId}).exec();
+  const home = await Home.findOne({ _id: homeId }).exec();
   home.dynamic.push(dynamic);
 
-  const album = await Album.findOne({type: 'system'}).exec();
+  const album = await Album.findOne({ type: 'system' }).exec();
   if (album) {
     images.forEach(item => {
       album.images.push(item);
@@ -77,7 +77,7 @@ router.post('/save', async (ctx) => {
     lover.album.push(album);
     home.album.push(album);
   }
-  
+
   lover.save();
   home.save();
 
@@ -93,9 +93,9 @@ router.post('/comment', async (ctx) => {
   let authorId = ctx.request.body.authorId;
   let dynamicId = ctx.request.body.dynamicId;
   let content = ctx.request.body.content;
-  const dynamic = await Dynamic.findOne({_id:dynamicId}).exec();
+  const dynamic = await Dynamic.findOne({ _id: dynamicId }).exec();
 
-  const author = await Lover.findOne({_id:authorId}).exec();
+  const author = await Lover.findOne({ _id: authorId }).exec();
   dynamic.comment.push({
     author: author,
     content: content,
@@ -107,6 +107,46 @@ router.post('/comment', async (ctx) => {
     message: 'comment succeed',
     data: null
   };
+});
+
+router.post('/delete', async (ctx) => {
+  let authorId = ctx.request.body.authorId;
+  let homeId = ctx.request.body.homeId;
+  let _id = ctx.request.body._id;
+  const dynamic = await Dynamic.findByIdAndDelete({ _id: _id });
+  console.log(dynamic);
+  if (dynamic) {
+    const user = await Lover.findOne({ _id: authorId }).exec();
+    const home = await Home.findOne({ _id: homeId }).exec();
+    let u_i = null,
+      h_i = null;
+    user.dynamic.forEach((item, index) => {
+      if (item === _id) {
+        u_i = index;
+      }
+    });
+    user.dynamic.splice(u_i, 1);
+    user.save();
+
+    home.dynamic.forEach((item, index) => {
+      if (item === _id) {
+        h_i = index;
+      }
+    });
+    home.dynamic.splice(h_i, 1);
+    home.save();
+    ctx.body = {
+      code: 200,
+      message: '删除成功',
+      data: null
+    }
+  } else {
+    ctx.body = {
+      code: 902,
+      message: 'can not find id.',
+      data: null
+    }
+  }
 });
 
 module.exports = router;
